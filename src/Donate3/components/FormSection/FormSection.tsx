@@ -11,11 +11,11 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Donate3Context } from '../../context/Donate3Context';
 import { ReactComponent as Loading } from '../../images/loading.svg';
 import { ReactComponent as Sol } from '../../images/sol.svg';
-import { ReactComponent as Switch } from '../../images/switch.svg';
+// import { ReactComponent as Switch } from '../../images/switch.svg';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 import Success from '../Success/Success';
 import styles from './FormSection.module.css';
-import BigNumber from 'bignumber.js';
-import { ethers } from "ethers";
 
 function FormSection() {
   const [amount, setAmount] = useState('0');
@@ -36,10 +36,9 @@ function FormSection() {
     color,
   } = React.useContext(Donate3Context);
 
-
   let amountIn: BigNumber | '' = 0 || '';
   if (!Number.isNaN(Number(amount))) {
-    amountIn = amount && ethers.utils.parseUnits(amount.toString(), "9");
+    amountIn = amount && ethers.utils.parseUnits(amount.toString(), '9');
   }
   const bytesMsg = ethers.utils.toUtf8Bytes(message);
   let donateTokenArgs = [
@@ -102,13 +101,10 @@ function FormSection() {
     // const pubKey = new PublicKey("7BzGMomgbswT6ynUmbkqA2mh2h9oGNgfKwfR2GrEmvRT");
     let signature: TransactionSignature = '';
     try {
-
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
-          toPubkey: new PublicKey(
-            toAddress ?? "",
-          ),
+          toPubkey: new PublicKey(toAddress ?? ''),
           lamports: BigInt(amountIn.toString()),
         }),
       );
@@ -118,7 +114,6 @@ function FormSection() {
     } catch (error: any) {
       // console.log('error', `Transaction failed! ${error?.message}`, signature);
       toast(String(error));
-
     }
     setShowLoading(false);
   };
@@ -161,9 +156,9 @@ function FormSection() {
               <span>{primaryCoin}</span>
               <span>Solana</span>
             </div>
-            <div className={styles.switch}>
+            {/* <div className={styles.switch}>
               <Switch />
-            </div>
+            </div> */}
           </div>
         </div>
         <div
