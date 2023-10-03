@@ -12,10 +12,10 @@ import { Donate3Context } from './context/Donate3Context';
 import { ReactComponent as Close } from './images/close.svg';
 import { DONATE_TYPE } from './utils/const';
 
+import { useWallet } from '@solana/wallet-adapter-react';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import FormSection from './components/FormSection/FormSection';
 import { getElementPosition } from './utils/index';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -33,9 +33,8 @@ function App() {
   } = React.useContext(Donate3Context);
 
   useEffect(() => {
-    if (!wallet)
-      select(new PhantomWalletAdapter().name)
-  }, [wallet])
+    if (!wallet) select(new PhantomWalletAdapter().name);
+  }, [wallet]);
 
   let cx = classNames.bind(styles);
 
@@ -136,7 +135,7 @@ function App() {
         ></div>
       ) : null}
       <div
-        className={showForm ? styles.app : styles.hidden}
+        className={showForm ? `${styles.app} dialogSlideInUp ` : styles.hidden}
         style={{ ...dialogStyle }}
       >
         {demo ? <div className={styles.demomask}></div> : null}

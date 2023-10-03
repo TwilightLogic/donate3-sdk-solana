@@ -206,8 +206,7 @@
   justify-content: space-evenly;
   align-items: center;
   height: 41px;
-  background: #ccff00;
-  color: #333;
+  background: #396aff;
   border-radius: 4px;
   cursor: pointer;
   border: 0px;
@@ -220,7 +219,7 @@
   background-color: #d7d7e0 !important;
 }
 .donate3btn:hover {
-  background: #e0ff66;
+  background: #1f93ff;
 }
 
 .donate3btn div:nth-child(1) {
@@ -228,7 +227,7 @@
   font-size: 12px;
   line-height: 15px;
   text-align: center;
-  color: #333;
+  color: #fff;
 }
 
 .donate3btn div:nth-child(2) {
