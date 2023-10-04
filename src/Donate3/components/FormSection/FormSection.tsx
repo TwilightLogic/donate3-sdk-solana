@@ -5,6 +5,8 @@ import {
   Transaction,
   TransactionSignature,
 } from '@solana/web3.js';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { Donate3Context } from '../../context/Donate3Context';
@@ -21,7 +23,8 @@ function FormSection() {
   const shortcutOption = useRef(null);
   const primaryCoin = 'SOL';
   const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
+  const { publicKey, sendTransaction, signTransaction } = useWallet();
+  // const { publicKey, sendTransaction } = useWallet();
 
   const {
     toAddress,
@@ -31,6 +34,21 @@ function FormSection() {
     showLoading,
     color,
   } = React.useContext(Donate3Context);
+  let amountIn: BigNumber | '' = 0 || '';
+  if (!Number.isNaN(Number(amount))) {
+    amountIn = amount && ethers.utils.parseUnits(amount.toString(), '9');
+  }
+  const bytesMsg = ethers.utils.toUtf8Bytes(message);
+  let donateTokenArgs = [
+    // pid,
+    amountIn,
+    toAddress,
+    bytesMsg,
+    [],
+    {
+      value: amountIn,
+    },
+  ];
   const timeout = 5; // s
 
   useEffect(() => {
@@ -80,34 +98,21 @@ function FormSection() {
     // const pubKey = new PublicKey("7BzGMomgbswT6ynUmbkqA2mh2h9oGNgfKwfR2GrEmvRT");
     let signature: TransactionSignature = '';
     try {
-      const destAddress = new PublicKey(
-        'FrmjU1XPp5cPeJSabTAYSffg4VBv98D2wpkKar9Y8tNF',
-      );
-      const amount = 1_000_000;
-
-      console.log(amount);
-
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
-          toPubkey: destAddress,
-          lamports: amount,
+          toPubkey: new PublicKey(toAddress ?? ''),
+          lamports: BigInt(amountIn.toString()),
         }),
       );
-      toast(
-        `handleDonate: ${publicKey.toBase58()} to ${destAddress.toBase58()} amount: ${amount}`,
-      );
       signature = await sendTransaction(transaction, connection);
-
-      await connection.confirmTransaction(signature, 'confirmed');
-      toast(`Transaction confirmed: ${signature}`);
-      // console.log('success', `Transaction success!`, signature);
-      setShowLoading(false);
+      toast('Syncing data, take 1-5 minutes to show');
+      setDonateCreateSuccess(true);
     } catch (error: any) {
       // console.log('error', `Transaction failed! ${error?.message}`, signature);
-      toast(`Transaction failed! ${error?.message}`);
-      return;
+      toast(String(error));
     }
+    setShowLoading(false);
   };
 
   const handleEthAmount = (event: MouseEvent<HTMLElement>) => {

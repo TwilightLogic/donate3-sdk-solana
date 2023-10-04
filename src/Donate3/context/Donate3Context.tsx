@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import { useAccount, useNetwork } from 'wagmi';
 import { Account, Donate3ContextType, DonorItem } from '../@types/donate3';
 import { getFasterIpfsLink } from '../utils/ipfsTools';
 
@@ -48,24 +47,23 @@ const Donate3Provider: React.FC<{
 }> = ({
   children,
   cid,
-  accountType,
   toAddress,
-  safeAccounts,
-  type = DONATE_TYPE.EMBED,
   color = '#764abc',
   title = 'Donate3',
   demo = false,
   avatar,
 }) => {
+  const { publicKey } = useWallet();
+  const [isConnected, setIsConnected] = useState(false);
   const [showDonorList, setShowDonorList] = React.useState(false);
   const [total, setTotal] = useState(0);
   const [showSemiModal, setShowSemiModal] = React.useState(false);
   const [showLoading, setShowLoading] = React.useState(false);
   const [loadingDonorList, setLoadingDonorList] = React.useState(true);
   const [donorList, setDonorList] = React.useState<DonorItem[]>();
-  const { publicKey } = useWallet();
-  const [isConnected, setIsConnected] = useState(false);
-  // const { chain, chains } = useNetwork();
+  const [toAddressReal, setToAddressReal] = React.useState<string | undefined>(
+    ZERO_ADDRESS,
+  );
   const [nftData, setNftData] = useState<{
     accountType?: number;
     address?: string;
@@ -75,16 +73,7 @@ const Donate3Provider: React.FC<{
     type: string;
   }>();
 
-  // const { address: fromAddress, isConnected } = useAccount();
-  // const [donorList, setDonorList] = React.useState<DonorResult>();
-  // const { donors: donorList } = useFetchDonors(
-  //   toAddress,
-  //   '1',
-  //   chain?.id.toString() || '0',
-  // );
   let fromAddressReal = publicKey?.toBase58() || undefined;
-  let toAddressReal =
-    accountType === 0 || accountType === undefined ? toAddress : undefined;
 
   useEffect(() => {
     if (!cid) {
@@ -93,108 +82,12 @@ const Donate3Provider: React.FC<{
     getFasterIpfsLink({
       ipfs: `https://nftstorage.link/ipfs/${cid}`,
       timeout: 4000,
-    })
-      .then((res: any) => {
-        setNftData(res);
-        let accountTypeNft = res.accountType;
-        let safeAccountsNft = res.safeAccounts;
-        toAddressReal =
-          accountTypeNft === 0 || accountTypeNft === undefined
-            ? res.address
-            : undefined;
-
-        if (
-          accountTypeNft === 1 &&
-          safeAccountsNft &&
-          safeAccountsNft.length &&
-          safeAccountsNft.some(
-            (item: Account) =>
-              item.networkId && item.address && item.networkId === chain?.id,
-          )
-        ) {
-          toAddressReal = (
-            safeAccountsNft.find(
-              (item: Account) => item.networkId === chain?.id,
-            ) as Account
-          ).address;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }).then((res: any) => {
+      setNftData(res);
+      setToAddressReal(res.address);
+      console.log(res.address);
+    });
   }, [cid]);
-
-  useEffect(() => {
-    if (!toAddressReal) {
-      setDonorList([]);
-      return;
-    }
-
-    (async () => {
-      try {
-        setLoadingDonorList(true);
-        const res = await fetch(
-          `https://backend.donate3.xyz/donates/ranking?` +
-            // `https://donate3.0xhardman.xyz/donates/ranking?` +
-            new URLSearchParams({
-              address: toAddressReal || '',
-              chainId: chain?.id.toString() || '0',
-            }),
-          {
-            method: 'GET',
-            mode: 'cors', // no-cors, *cors, same-origin
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
-        const json = await res.json();
-        console.log(json);
-
-        const { data: result } = json;
-        console.log(result);
-        setDonorList(result?.length ? result : []);
-      } catch (error) {
-        setDonorList([]);
-        console.log(error);
-      } finally {
-        setLoadingDonorList(false);
-      }
-    })();
-  }, [toAddressReal]);
-  console.log(donorList);
-  // if (
-  //   accountType === 1 &&
-  //   safeAccounts &&
-  //   safeAccounts.length &&
-  //   safeAccounts.some(
-  //     (item: Account) =>
-  //       item.networkId && item.address && item.networkId === chain?.id,
-  //   )
-  // ) {
-  //   toAddressReal = (
-  //     safeAccounts.find(
-  //       (item: Account) => item.networkId === chain?.id,
-  //     ) as Account
-  //   ).address;
-  // }
-
-  useEffect(() => {
-    let count = (donorList && donorList.length) || 0;
-    setTotal(count);
-  }, [donorList]);
-
-  // useEffect(() => {
-  //   if (isConnected) {
-  //     setShowSemiModal(false);
-  //   } else {
-  //     setShowSemiModal(true);
-  //   }
-  //   if (demo) {
-  //     setShowSemiModal(false);
-  //   }
-  // }, [isConnected]);
 
   useEffect(() => {
     if (publicKey) {

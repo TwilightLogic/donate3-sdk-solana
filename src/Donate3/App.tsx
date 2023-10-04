@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import styles from './App.module.css';
 import DonateButton from './components/DonateButton/DonateButton';
@@ -13,11 +13,14 @@ import { Donate3Context } from './context/Donate3Context';
 import { ReactComponent as Close } from './images/close.svg';
 import { DONATE_TYPE } from './utils/const';
 
+import { useWallet } from '@solana/wallet-adapter-react';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { getElementPosition } from './utils/index';
 
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [dialogStyle, setDialogStyle] = useState({});
+  const { select, wallet } = useWallet();
 
   const {
     type,
@@ -28,6 +31,10 @@ function App() {
     color,
     demo,
   } = React.useContext(Donate3Context);
+
+  useEffect(() => {
+    if (!wallet) select(new PhantomWalletAdapter().name);
+  }, [wallet]);
 
   let cx = classNames.bind(styles);
   const handleSwitchDialog = (event: any) => {
