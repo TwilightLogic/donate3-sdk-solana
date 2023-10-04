@@ -1,4 +1,4 @@
-export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export const ZERO_ADDRESS = '11111111111111111111111111111111';
 export enum DONATE_TYPE {
   FLOAT = 'float',
   EMBED = 'embed',
@@ -15,6 +15,7 @@ export type PrimaryCoinType = {
   Ethereum: string | number[];
   Goerli: string | number[];
   Polygon: string | number[];
+  Solana: string | number[];
   'Polygon Mumbai': string | number[];
 };
 
@@ -23,6 +24,7 @@ export const PRIMARY_COIN: PrimaryCoinType = {
   Goerli: 'ETH',
   Polygon: 'MATIC',
   'Polygon Mumbai': 'MATIC',
+  Solana: 'Solana',
 };
 
 export const DONATE_VALUE_MAP: PrimaryCoinType = {
@@ -30,12 +32,12 @@ export const DONATE_VALUE_MAP: PrimaryCoinType = {
   Goerli: [0.001, 0.01, 0.5],
   Polygon: [0.5, 5, 25],
   'Polygon Mumbai': [0.5, 5, 25],
+  Solana: [0.001, 0.01, 0.5],
 };
-
 
 export type Explores = {
   [key: number]: string;
-}
+};
 export const EXPLORER_URL_MAP: Explores = {
   0: 'https://etherscan.io/address/',
   1: 'https://etherscan.io/address/',
@@ -43,4 +45,4 @@ export const EXPLORER_URL_MAP: Explores = {
   137: 'https://polygonscan.com/address/',
   80001: 'https://mumbai.polygonscan.com/address/',
   5: 'https://goerli.etherscan.io/address/',
-}
+};

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useAccount, useNetwork } from 'wagmi';
+// import { useAccount, useNetwork } from 'wagmi';
 import { Account, Donate3ContextType, DonorItem } from '../@types/donate3';
 import { getFasterIpfsLink } from '../utils/ipfsTools';
 
 // import DonorResultMockData from '../Mock/DonorResult.json';
+import { useWallet } from '@solana/wallet-adapter-react';
 import {
   DONATE_TYPE,
   embedType,
@@ -36,7 +37,7 @@ const Donate3Provider: React.FC<{
   children: React.ReactNode;
   cid: string;
   accountType: number;
-  toAddress: `0x${string}` | undefined;
+  toAddress: `${string}` | undefined;
   safeAccounts?: Account[] | undefined;
   type: floatType | embedType;
   color: string;
@@ -61,7 +62,9 @@ const Donate3Provider: React.FC<{
   const [showLoading, setShowLoading] = React.useState(false);
   const [loadingDonorList, setLoadingDonorList] = React.useState(true);
   const [donorList, setDonorList] = React.useState<DonorItem[]>();
-  const { chain, chains } = useNetwork();
+  const { publicKey } = useWallet();
+  const [isConnected, setIsConnected] = useState(false);
+  // const { chain, chains } = useNetwork();
   const [nftData, setNftData] = useState<{
     accountType?: number;
     address?: string;
@@ -71,13 +74,14 @@ const Donate3Provider: React.FC<{
     type: string;
   }>();
 
-  const { address: fromAddress, isConnected } = useAccount();
+  // const { address: fromAddress, isConnected } = useAccount();
   // const [donorList, setDonorList] = React.useState<DonorResult>();
   // const { donors: donorList } = useFetchDonors(
   //   toAddress,
   //   '1',
   //   chain?.id.toString() || '0',
   // );
+  let fromAddressReal = publicKey?.toBase58() || undefined;
   let toAddressReal =
     accountType === 0 || accountType === undefined ? toAddress : undefined;
 
@@ -157,39 +161,52 @@ const Donate3Provider: React.FC<{
         setLoadingDonorList(false);
       }
     })();
-  }, [chain, toAddressReal]);
+  }, [toAddressReal]);
   console.log(donorList);
-  if (
-    accountType === 1 &&
-    safeAccounts &&
-    safeAccounts.length &&
-    safeAccounts.some(
-      (item: Account) =>
-        item.networkId && item.address && item.networkId === chain?.id,
-    )
-  ) {
-    toAddressReal = (
-      safeAccounts.find(
-        (item: Account) => item.networkId === chain?.id,
-      ) as Account
-    ).address;
-  }
+  // if (
+  //   accountType === 1 &&
+  //   safeAccounts &&
+  //   safeAccounts.length &&
+  //   safeAccounts.some(
+  //     (item: Account) =>
+  //       item.networkId && item.address && item.networkId === chain?.id,
+  //   )
+  // ) {
+  //   toAddressReal = (
+  //     safeAccounts.find(
+  //       (item: Account) => item.networkId === chain?.id,
+  //     ) as Account
+  //   ).address;
+  // }
 
   useEffect(() => {
     let count = (donorList && donorList.length) || 0;
     setTotal(count);
   }, [donorList]);
 
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     setShowSemiModal(false);
+  //   } else {
+  //     setShowSemiModal(true);
+  //   }
+  //   if (demo) {
+  //     setShowSemiModal(false);
+  //   }
+  // }, [isConnected]);
+
   useEffect(() => {
-    if (isConnected) {
+    if (publicKey) {
       setShowSemiModal(false);
+      setIsConnected(true);
+      fromAddressReal = publicKey.toBase58();
     } else {
       setShowSemiModal(true);
     }
     if (demo) {
       setShowSemiModal(false);
     }
-  }, [isConnected]);
+  }, [publicKey]);
 
   return (
     <Donate3Context.Provider
@@ -197,7 +214,7 @@ const Donate3Provider: React.FC<{
         total,
         donorList,
         toAddress: toAddressReal,
-        fromAddress,
+        fromAddress: fromAddressReal,
         title,
         type:
           nftData?.type !== undefined ? (nftData?.type as DONATE_TYPE) : type,
@@ -212,8 +229,6 @@ const Donate3Provider: React.FC<{
         loadingDonorList,
         setLoadingDonorList,
         demo,
-        chain,
-        chains,
         avatar: (nftData?.avatar ||
           avatar) as `https://nftstorage.link/ipfs/${string}`,
       }}
