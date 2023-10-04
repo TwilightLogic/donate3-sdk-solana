@@ -9,11 +9,12 @@ import {
   DONATE_TYPE,
   embedType,
   floatType,
+  MY_ADDRESS,
   ZERO_ADDRESS,
 } from '../utils/const';
 export const Donate3Context = React.createContext<Donate3ContextType>({
   toAddress: ZERO_ADDRESS,
-  fromAddress: ZERO_ADDRESS,
+  fromAddress: MY_ADDRESS,
   type: DONATE_TYPE.EMBED,
   color: '#764abc',
   total: 0,
