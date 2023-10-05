@@ -13,9 +13,6 @@
   z-index: 10000;
   box-sizing: border-box;
   overflow: hidden;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .donate3btn {
@@ -88,7 +85,6 @@
   align-items: center;
   cursor: pointer;
 }
-
 .btn-animated {
   animation: moveInBottom 0.2s ease-out;
   animation-fill-mode: backwards;

@@ -19,7 +19,7 @@ The first method uses Donate3，Just as a js component for your project
 import { Donate3 } from 'donate3-sdk';
 
 const config = {
-  cid: 'bafkreif4w7p2fltakwj6oxukavz5ecw24e3uukfhhj2bkuznofdmxjoi7u',
+  cid: 'bafkreiavlqspktguaiongpilbzyf5cmrqzci6orjneywrerlru3lwm27yi',
   // The cid can be generated after the official website configuration information
   // If cid exists, other parameters are not required,
   // otherwise the remaining parameters are required
@@ -59,7 +59,7 @@ address: "0xb86EB6f8a39Db243a9ae544F180ef958dBA4e8b4",
 
 ```html
 <div
-  data-donate3-cid="bafkreif4w7p2fltakwj6oxukavz5ecw24e3uukfhhj2bkuznofdmxjoi7u"
+  data-donate3-cid="bafkreiavlqspktguaiongpilbzyf5cmrqzci6orjneywrerlru3lwm27yi"
   data-donate3-type="1"
   data-donate3-color="#396AFF"
   data-donate3-title="charity3"

@@ -22,15 +22,8 @@ function App() {
   const [dialogStyle, setDialogStyle] = useState({});
   const { select, wallet } = useWallet();
 
-  const {
-    type,
-    toAddress,
-    showDonorList,
-    setShowDonorList,
-    showSemiModal,
-    color,
-    demo,
-  } = React.useContext(Donate3Context);
+  const { type, toAddress, showDonorList, showSemiModal, color, demo } =
+    React.useContext(Donate3Context);
 
   useEffect(() => {
     if (!wallet) select(new PhantomWalletAdapter().name);
@@ -72,7 +65,6 @@ function App() {
 
   const renderDonate3Button = (type: DONATE_TYPE) => {
     const bgStyle = { background: color };
-
     if (type === DONATE_TYPE.FLOAT) {
       return (
         <div
@@ -110,7 +102,6 @@ function App() {
 
           <div
             onClick={(e) => {
-              setShowDonorList(true);
               handleSwitchDialog(e);
             }}
           >
@@ -126,16 +117,14 @@ function App() {
     <>
       {type === DONATE_TYPE.EMBED && (showForm || showDonorList) ? (
         <div
-          style={{ inset: 0, margin: 'auto' }}
           className={styles.mask}
           onClick={() => {
             setShowForm(false);
-            setShowDonorList(false);
           }}
         ></div>
       ) : null}
       <div
-        className={showForm ? `${styles.app} dialogSlideInUp ` : styles.hidden}
+        className={showForm ? `${styles.app} dialogSlideInUp` : styles.hidden}
         style={{ ...dialogStyle }}
       >
         {demo ? <div className={styles.demomask}></div> : null}
