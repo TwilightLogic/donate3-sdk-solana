@@ -1,11 +1,11 @@
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { Metaplex } from '@metaplex-foundation/js';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
 import {
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionSignature,
-} from '@solana/web3.js';
-
+  useAnchorWallet,
+  useConnection,
+  useWallet,
+} from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
@@ -14,9 +14,34 @@ import { Donate3Context } from '../../context/Donate3Context';
 import { ReactComponent as Loading } from '../../images/loading.svg';
 import { ReactComponent as Sol } from '../../images/sol.svg';
 // import { ReactComponent as Switch } from '../../images/switch.svg';
+import { AnchorProvider, BN, Program, utils, web3 } from '@coral-xyz/anchor';
+import { IDL } from '../../donate3';
 import Success from '../Success/Success';
 import styles from './FormSection.module.css';
+class Assignable {
+  constructor(properties: any) {
+    Object.keys(properties).map((key) => {
+      return (this[key] = properties[key]);
+    });
+  }
+}
 
+// Our instruction payload vocabulary
+class Payload extends Assignable {}
+
+// Borsh needs a schema describing the payload
+const payloadSchema = new Map([
+  [
+    Payload,
+    {
+      kind: 'struct',
+      fields: [
+        ['amount', 'u64'],
+        ['message', 'string'],
+      ],
+    },
+  ],
+]);
 function FormSection() {
   const [amount, setAmount] = useState('0');
   const [message, setMessage] = useState(' ');
@@ -26,6 +51,7 @@ function FormSection() {
   const primaryCoin = 'SOL';
   const { connection } = useConnection();
   const { publicKey, sendTransaction, signTransaction } = useWallet();
+  const wallet = useAnchorWallet();
 
   const {
     toAddress,
@@ -97,18 +123,92 @@ function FormSection() {
       console.log('error', `Send Transaction: Wallet not connected!`);
       return;
     }
+    let mintKey = web3.Keypair.generate();
+    const metaplex = Metaplex.make(connection);
+    const NftTokenAccount = getAssociatedTokenAddressSync(
+      mintKey.publicKey,
+      publicKey,
+    );
 
+    const metadataPDA = metaplex
+      .nfts()
+      .pdas()
+      .metadata({ mint: mintKey.publicKey });
+
+    const mintMasterPDA = metaplex
+      .nfts()
+      .pdas()
+      .masterEdition({ mint: mintKey.publicKey });
+    const anchor_provider = new AnchorProvider(connection, wallet, {});
+    const pg = new Program(
+      IDL,
+      '3yz5aQ6A5w5mWicriDkAHAqGEC4LDU2A9gLmtxTUbmdx',
+      anchor_provider,
+    );
     // const pubKey = new PublicKey("7BzGMomgbswT6ynUmbkqA2mh2h9oGNgfKwfR2GrEmvRT");
-    let signature: TransactionSignature = '';
+    // Serialize the payload
+
     try {
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: new PublicKey(toAddress ?? ''),
-          lamports: BigInt(amountIn.toString()),
-        }),
-      );
-      signature = await sendTransaction(transaction, connection);
+      await pg.methods
+        .transferLamports(new BN(amountIn.toString()), 'hello')
+        .accounts({
+          signer: publicKey,
+          to: new PublicKey(toAddress ?? ''),
+          tokenMint: mintKey.publicKey,
+          tokenAccount: NftTokenAccount,
+          metadataAccount: metadataPDA,
+          masterEdition: mintMasterPDA,
+          tokenMetadataProgram: new web3.PublicKey(
+            'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+          ),
+          associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
+        })
+        .signers([mintKey])
+        .rpc();
+      // const transaction = new Transaction({
+      //   feePayer: publicKey,
+      // }).add(
+      //   new TransactionInstruction({
+      //     data: Buffer.from('1234'),
+      //     keys: [
+      //       { pubkey: publicKey, isSigner: true, isWritable: true },
+      //       { pubkey: mintKey.publicKey, isSigner: true, isWritable: true },
+      //       { pubkey: NftTokenAccount, isSigner: false, isWritable: true },
+      //       { pubkey: mintMasterPDA, isSigner: false, isWritable: true },
+      //       { pubkey: metadataPDA, isSigner: false, isWritable: true },
+      //       {
+      //         pubkey: new PublicKey(
+      //           'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+      //         ),
+      //         isSigner: false,
+      //         isWritable: false,
+      //       },
+      //       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+
+      //       {
+      //         pubkey: new PublicKey(
+      //           'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+      //         ),
+      //         isSigner: false,
+      //         isWritable: false,
+      //       },
+      //       {
+      //         pubkey: new PublicKey('11111111111111111111111111111111'),
+      //         isSigner: false,
+      //         isWritable: false,
+      //       },
+      //     ],
+      //     programId: new PublicKey(''),
+      //   }),
+      // );
+
+      // const transaction = new Transaction().add(
+      //   SystemProgram.transfer({
+      //     fromPubkey: publicKey,
+      //     toPubkey: new PublicKey(toAddress ?? ''),
+      //     lamports: BigInt(amountIn.toString()),
+      //   }),
+      // );
       toast('Syncing data, take 1-5 minutes to show');
       setDonateCreateSuccess(true);
     } catch (error: any) {
