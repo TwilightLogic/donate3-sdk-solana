@@ -35,7 +35,7 @@ function Header({ normalmode }: HeaderProps) {
       <div
         className={styles.avatarwrap}
         onClick={() => {
-          setShowDonorList(true);
+          // setShowDonorList(true);
         }}
       >
         <fieldset className={styles.fieldset}>
