@@ -56,6 +56,7 @@ const Donate3Provider: React.FC<{
     const [isConnected, setIsConnected] = useState(false);
     const [showDonorList, setShowDonorList] = React.useState(false);
     const [total, setTotal] = useState(0);
+    const [avatarReal, setAvatarReal] = useState('');
     const [titleReal, setTitleReal] = useState('Donate3');
     const [showSemiModal, setShowSemiModal] = React.useState(false);
     const [showLoading, setShowLoading] = React.useState(false);
@@ -85,7 +86,8 @@ const Donate3Provider: React.FC<{
       }).then((res: any) => {
         setNftData(res);
         setToAddressReal(res.address);
-        setTitleReal(res.name)
+        setTitleReal(res.name);
+        setAvatarReal(res.avatar);
         console.log(res.address);
       });
     }, [cid]);
@@ -106,6 +108,7 @@ const Donate3Provider: React.FC<{
     return (
       <Donate3Context.Provider
         value={{
+          avatar: avatarReal,
           total,
           donorList,
           toAddress: toAddressReal,

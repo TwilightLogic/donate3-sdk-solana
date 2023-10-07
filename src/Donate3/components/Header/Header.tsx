@@ -27,8 +27,8 @@ function Header({ normalmode }: HeaderProps) {
           To:
           {toAddress
             ? `${toAddress.slice(0, 6)}...${toAddress.slice(
-                toAddress.length - 4,
-              )}`
+              toAddress.length - 4,
+            )}`
             : 'Unsupported Network'}
         </div>
       </div>
