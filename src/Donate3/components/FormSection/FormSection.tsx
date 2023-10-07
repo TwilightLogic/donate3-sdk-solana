@@ -248,7 +248,7 @@ function FormSection() {
         <Toaster position="top-center" reverseOrder={false} />
       </div>
       <section className={styles.appcontent}>
-        <div>
+        <div >
           <div className={styles.title}>Payment Method</div>
           <div className={styles.methodinput}>
             <div className={styles.cointxt}>

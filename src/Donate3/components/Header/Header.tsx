@@ -17,6 +17,7 @@ function Header({ normalmode }: HeaderProps) {
   let cx = classNames.bind(styles);
   return (
     <header
+      style={{ cursor: "auto" }}
       className={cx(styles.header, {
         normalmode: normalmode && type === DONATE_TYPE.EMBED,
       })}
