@@ -13,5 +13,5 @@
       "donate3-sdk-solana/*": ["src/*", "*"]
     }
   },
-  "include": [".dumi/**/*", ".dumirc.ts", "src/**/*","custom.d.ts"]
+  "include": [".dumirc.ts", "src/**/*", "custom.d.ts"]
 }

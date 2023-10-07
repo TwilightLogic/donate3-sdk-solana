@@ -133,12 +133,12 @@ function App() {
         <Footer></Footer>
         {showSemiModal ? <SemiModal></SemiModal> : null}
       </div>
-      <div
+      {/* <div
         className={showDonorList ? `${styles.app} dialogZoomIn` : styles.hidden}
         style={{ ...dialogStyle }}
       >
-        {/* <DonorList /> */}
-      </div>
+        <DonorList />
+      </div> */}
 
       {renderDonate3Button(type)}
     </>
