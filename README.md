@@ -19,7 +19,7 @@ The first method uses Donate3，Just as a js component for your project
 import { Donate3 } from 'donate3-sdk';
 
 const config = {
-  cid: 'bafkreifxvqncoy4av56uyvptf5hrmfphckyst6wa7yaonlqk3ww6sj5ehi',
+  cid: 'bafkreiav5wlxi5dwlg74747mtsqmpkfuuykbmhwvn7ibmtpa3uydtu57m4',
   // The cid can be generated after the official website configuration information
   // If cid exists, other parameters are not required,
   // otherwise the remaining parameters are required
