@@ -29,6 +29,7 @@ module.exports = {
       https: require.resolve("https-browserify"),
       crypto: require.resolve("crypto-browserify"),
       zlib: require.resolve('browserify-zlib'),
+      path: require.resolve("path-browserify")
     },
   },
   plugins: [

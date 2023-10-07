@@ -7,7 +7,7 @@ import { Donate3 } from 'donate3-sdk';
 
 const config = {
   type: 'embed', // 0 Float mode，1 Normal mode float\embed
-  cid: 'bafkreiavlqspktguaiongpilbzyf5cmrqzci6orjneywrerlru3lwm27yi',
+  cid: 'bafkreifxvqncoy4av56uyvptf5hrmfphckyst6wa7yaonlqk3ww6sj5ehi',
   color: "#666",
   title: "Donate3",
   accountType: 1, // 账户类型 0： EOA， 1：safe account
