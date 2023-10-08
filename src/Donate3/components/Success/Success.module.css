@@ -1,4 +1,4 @@
-.wrap{
+.wrap {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -12,23 +12,21 @@
   justify-content: space-around;
 }
 
-.img{
+.img {}
 
-}
-
-.btn{
+.btn {
   width: 292px;
   height: 41px;
   background: #396AFF;
   border-radius: 4px;
   border: 0px;
-  color:white;
+  color: white;
   font-weight: 700;
   font-size: 14px;
   margin-bottom: 30px;
   cursor: pointer;
 }
 
-.btn:hover{
+.btn:hover {
   background-color: #086BFF;
 }

@@ -27,7 +27,7 @@ class Assignable {
 }
 
 // Our instruction payload vocabulary
-class Payload extends Assignable {}
+class Payload extends Assignable { }
 
 // Borsh needs a schema describing the payload
 const payloadSchema = new Map([
@@ -150,7 +150,7 @@ function FormSection() {
 
     try {
       await pg.methods
-        .transferLamports(new BN(amountIn.toString()), 'hello')
+        .transferLamports(new BN(amountIn.toString()), message)
         .accounts({
           signer: publicKey,
           to: new PublicKey(toAddress ?? ''),
@@ -248,7 +248,7 @@ function FormSection() {
         <Toaster position="top-center" reverseOrder={false} />
       </div>
       <section className={styles.appcontent}>
-        <div>
+        <div >
           <div className={styles.title}>Payment Method</div>
           <div className={styles.methodinput}>
             <div className={styles.cointxt}>
@@ -289,6 +289,16 @@ function FormSection() {
           onFocus={handleManualAmountFocus}
           onChange={handleManualAmountChange}
         ></input>
+        <div className={styles.msg}>
+          <div>Message</div>
+          <textarea
+            placeholder="Will be published on chain"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.currentTarget.value);
+            }}
+          ></textarea>
+        </div>
         <button
           type="button"
           className={styles.donate3btn}
